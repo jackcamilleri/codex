@@ -127,8 +127,6 @@ def main(argv=None):
 
     if args.set_last:
         set_last_workout(args.set_last)
-        if not args.print_only:
-            return 0
 
     if args.print_only:
         day_text, workout_text = render_text()
