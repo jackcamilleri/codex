@@ -32,9 +32,8 @@ Press `Esc` to exit fullscreen.
 python3 workout_display.py --set-last "Chest and triceps"
 ```
 
-This updates the stored state and exits without starting the UI. Once updated,
-the next workout will be shown the next time the screen refreshes (or when you
-restart the app).
+Once updated, the next workout will be shown the next time the screen refreshes
+(or when you restart the app).
 
 ### Print today's workout to the terminal
 
