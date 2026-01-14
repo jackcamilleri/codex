@@ -45,10 +45,22 @@ def render_text():
     return day_label, planned
 
 
+def workout_icon(workout_name):
+    icons = {
+        "Legs and abs": "🦵🧘",
+        "Chest and triceps": "🏋️💪",
+        "Back and biceps": "🧗💪",
+        "Shoulders and abs": "🏋️‍♂️🧘",
+        "Cardio": "🏃❤️",
+    }
+    return icons.get(workout_name, "💪")
+
+
 def update_display(date_label, workout_label):
     day_text, workout_text = render_text()
     date_label.configure(text=day_text)
     workout_label.configure(text=workout_text)
+    workout_label.icon_label.configure(text=workout_icon(workout_text))
     date_label.after(60_000, update_display, date_label, workout_label)
 
 
@@ -59,34 +71,82 @@ def run_display(fullscreen):
     root.attributes("-fullscreen", fullscreen)
 
     container = tk.Frame(root, bg="#111111")
-    container.pack(expand=True)
+    container.pack(fill="both", expand=True, padx=40, pady=30)
 
     date_label = tk.Label(
         container,
         text="",
-        font=("Helvetica", 36, "bold"),
+        font=("Helvetica", 30, "bold"),
         fg="#f5f5f5",
         bg="#111111",
     )
-    date_label.pack(pady=(0, 20))
+    date_label.pack(pady=(0, 30))
+
+    content = tk.Frame(container, bg="#111111")
+    content.pack(fill="both", expand=True)
+
+    left_column = tk.Frame(content, bg="#111111")
+    left_column.pack(side="left", fill="both", expand=True, anchor="w")
+
+    right_column = tk.Frame(content, bg="#111111")
+    right_column.pack(side="right", fill="both", expand=True, anchor="e")
 
     workout_title = tk.Label(
-        container,
+        left_column,
         text="Today's Workout",
-        font=("Helvetica", 24),
+        font=("Helvetica", 22),
         fg="#a0a0a0",
         bg="#111111",
+        anchor="w",
+        justify="left",
     )
-    workout_title.pack()
+    workout_title.pack(anchor="w")
 
-    workout_label = tk.Label(
-        container,
+    workout_row = tk.Frame(left_column, bg="#111111")
+    workout_row.pack(anchor="w", pady=(12, 0))
+
+    workout_icon_label = tk.Label(
+        workout_row,
         text="",
-        font=("Helvetica", 40, "bold"),
-        fg="#4ade80",
+        font=("Helvetica", 40),
+        fg="#facc15",
         bg="#111111",
     )
-    workout_label.pack(pady=(10, 0))
+    workout_icon_label.pack(side="left")
+
+    workout_label = tk.Label(
+        workout_row,
+        text="",
+        font=("Helvetica", 38, "bold"),
+        fg="#4ade80",
+        bg="#111111",
+        anchor="w",
+        justify="left",
+    )
+    workout_label.pack(side="left", padx=(14, 0))
+    workout_label.icon_label = workout_icon_label
+
+    metrics_title = tk.Label(
+        right_column,
+        text="Fitness Metrics",
+        font=("Helvetica", 20),
+        fg="#a0a0a0",
+        bg="#111111",
+        anchor="e",
+        justify="right",
+    )
+    metrics_title.pack(anchor="e")
+
+    metrics_hint = tk.Label(
+        right_column,
+        text="Sleep, recovery, and other stats\ncoming soon",
+        font=("Helvetica", 18),
+        fg="#64748b",
+        bg="#111111",
+        anchor="e",
+        justify="right",
+    )
+    metrics_hint.pack(anchor="e", pady=(12, 0))
 
     update_display(date_label, workout_label)
     root.bind("<Escape>", lambda event: root.destroy())
@@ -127,6 +187,8 @@ def main(argv=None):
 
     if args.set_last:
         set_last_workout(args.set_last)
+        if not args.print_only:
+            return 0
 
     if args.print_only:
         day_text, workout_text = render_text()
